@@ -13,7 +13,7 @@ iframe {height: 100vh !important; width: 100% !important; border: 0;}
 </style>
 """, unsafe_allow_html=True)
 
-with open("TramISAC3D.html", "r", encoding="utf-8") as f:
+with open("index.html", "r", encoding="utf-8") as f:
     html_content = f.read()
 
 components.html(html_content, height=900, scrolling=False)
