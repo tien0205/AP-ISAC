@@ -23,7 +23,7 @@ button{background:linear-gradient(90deg,#7c3aed,#ec4899);color:#fff;border:0;bor
 .dv{border:1px solid var(--bd);border-radius:8px;padding:6px 8px;margin-top:6px}.dh{display:flex;align-items:center;gap:6px;font-weight:600}.dh i{width:9px;height:9px;border-radius:50%}.dh .r{margin-left:auto;font-weight:400;color:var(--mut);font-size:11px}.dr{display:flex;align-items:center;gap:6px;margin-top:4px}.dr button{margin:0;padding:1px 10px;font-size:15px}.dr b{min-width:14px;text-align:center}.dr select{margin-left:auto;background:#10163a;color:var(--fg);border:1px solid var(--bd);border-radius:6px;font-size:11px;padding:3px}
 .lg{display:flex;flex-wrap:wrap;gap:3px 10px;margin-top:10px;font-size:11px;color:var(--mut)}
 .lg i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
-.ap{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.ap button{margin:0;padding:3px 9px;background:#10163a;border:1px solid var(--bd);font-size:11px}.ap button.on{border-color:#fff;box-shadow:0 0 0 1px #fff}.ap i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.ap{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}.ap button{margin:0;padding:3px 9px;background:#10163a;border:1px solid var(--bd);font-size:11px}.ap button.on{border-color:#fff;box-shadow:0 0 0 1px #fff}.ap i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}.ap button.st{border-color:#b44cff;background:#24143f}.ap button.st.on{border-color:#fff}
 @media(max-width:600px){.hud{width:calc(100% - 20px);max-height:44%}}
 </style></head><body>
 <canvas id="c"></canvas>
@@ -34,7 +34,7 @@ button{background:linear-gradient(90deg,#7c3aed,#ec4899);color:#fff;border:0;bor
 <div style="margin-top:10px;font-weight:600;font-size:12px">Thiết bị và mức ưu tiên</div>
 <div id="dev"></div>
 <div id="sel" style="font-size:11.5px;margin-top:8px;font-weight:600;min-height:16px;color:var(--cy)"></div>
-<p style="margin-top:2px">Kéo thiết bị trong cảnh để đổi vị trí; thiết bị vừa kéo sẽ đứng yên tại chỗ.</p>
+<p style="margin-top:2px">Kéo thiết bị hoặc vật cản trong cảnh để đổi vị trí; vật vừa kéo sẽ đứng yên tại chỗ.</p>
 <p style="margin-top:6px">Mỗi trạm chia thời gian truyền dữ liệu theo trọng số Thấp 1 : Trung bình 2 : Cao 4. Ưu tiên càng cao thì thiết bị càng to và nhận càng nhiều gói dữ liệu.</p>
 <div id="bar"><span style="left:8px">DỮ LIỆU</span><span id="qt">QUÉT</span><div id="cur"></div></div>
 <div class="mut" id="ph" style="font-size:11.5px;margin-top:4px;font-weight:600"></div>
@@ -49,7 +49,9 @@ button{background:linear-gradient(90deg,#7c3aed,#ec4899);color:#fff;border:0;bor
 <canvas id="an" width="452" height="150" style="width:100%;height:75px;margin-top:6px;border:1px solid var(--bd);border-radius:8px;background:#070b22;display:block"></canvas>
 <div id="rx" style="font-size:11px;color:var(--mut);margin-top:4px;min-height:62px"></div>
 <p style="margin:2px 0 0">Bấm vào trạm trong cảnh hoặc chọn số trạm để xem. Đường cam nét đứt là ngưỡng phát hiện.</p>
-<button id="pz">Tạm dừng</button><button id="rs">Đặt lại</button><button id="un">Thả ghim (0)</button><button id="ar">Tắt xoay cảnh</button>
+<button id="pz">Tạm dừng</button><button id="rs">Đặt lại</button><button id="un">Thả ghim (0)</button><button id="ar">Tắt xoay cảnh</button><button id="tm">Vật cản: đang di chuyển</button>
+<div style="margin-top:10px;font-weight:600;font-size:12px">Từng vật cản <span style="font-weight:400;color:var(--mut)">(bấm số để đứng yên / di chuyển)</span></div>
+<div class="ap" id="ob"></div>
 <div class="lg">
 <span><i style="background:#ffb020"></i>Trạm ISAC</span>
 <span><i style="background:#00e5ff"></i>Xe</span><span><i style="background:#ff2d95"></i>Drone</span>
@@ -75,7 +77,7 @@ CFG.forEach(([k,l,mn,mx,st])=>{const d=document.createElement('div');
 function sync(){CFG.forEach(([k,,,,,u])=>val[k].textContent=(k==='rho'?Math.round(S[k]*100):S[k])+u);
  $('bar').style.background=`linear-gradient(90deg,#2563eb ${(1-S.rho)*100}%,#f59e0b ${(1-S.rho)*100}%)`;
  $('qt').style.left=((1-S.rho)*100+2)+'%';$('qt').style.display=S.rho>.12?'':'none';
- apO.forEach((o,a)=>o.g.visible=a<S.nap);tgO.forEach((o,i)=>o.m.visible=i<S.K);if(sa>=S.nap)sa=S.nap-1;asB.forEach((b,a)=>b.style.display=a<S.nap?'':'none')}
+ apO.forEach((o,a)=>o.g.visible=a<S.nap);tgO.forEach((o,i)=>o.m.visible=i<S.K);if(sa>=S.nap)sa=S.nap-1;asB.forEach((b,a)=>b.style.display=a<S.nap?'':'none');if(so!==null&&so>=S.K)so=null;obB.forEach((b,i)=>b.style.display=i<S.K?'':'none')}
 // ---------- three ----------
 const cvs=$('c'),R=new THREE.WebGLRenderer({canvas:cvs,antialias:true});
 R.setPixelRatio(Math.min(devicePixelRatio||1,2));
@@ -119,10 +121,10 @@ const ueO=[];DT.forEach((d,t)=>{for(let k=0;k<6;k++){
  sc.add(m,ln);ueO.push({m,ln,pk,stem})}});
 const ecs=[];const ecG=new THREE.SphereGeometry(4.5,10,8);
 // ---------- sim ----------
-let sel=null,drag=null,dragPid=null,dOff=[0,0],sa=0,rx=[];
+let sel=null,drag=null,dragPid=null,dOff=[0,0],sa=0,rx=[],so=null,dragT=false;
 let t=0,pause=false,echoes=[],T=[],UE=[],ang=[],cd=[],stat={pd:.5,e1:null,e2:null},rt=0,rtT=[0,0,0,0];
 const gauss=()=>{let u=0;while(!u)u=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(6.2832*Math.random())};
-function init(){sel=null;rx=APS.map(()=>[]);T=[];for(let i=0;i<15;i++){const a=Math.random()*6.28,s=15+Math.random()*15;T.push({x:80+Math.random()*640,y:80+Math.random()*640,vx:Math.cos(a)*s,vy:Math.sin(a)*s,est:{}})}
+function init(){sel=null;so=null;rx=APS.map(()=>[]);T=[];for(let i=0;i<15;i++){const a=Math.random()*6.28,s=15+Math.random()*15;T.push({x:80+Math.random()*640,y:80+Math.random()*640,vx:Math.cos(a)*s,vy:Math.sin(a)*s,est:{}})}
  UE=[];DT.forEach((d,t)=>{for(let k=0;k<6;k++){const a=Math.random()*6.28,sp=d.v[0]+Math.random()*(d.v[1]-d.v[0]);UE.push({t,k,x:80+Math.random()*640,y:80+Math.random()*640,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp})}});
  ang=APS.map((_,a)=>[0,1,2].map(b=>a*1.1+b*2.0944));cd=APS.map(()=>new Array(15).fill(0));
  echoes.forEach(e=>sc.remove(e.m));echoes=[];stat={pd:.5,e1:null,e2:null}}
@@ -150,7 +152,7 @@ function stemTo(s,x,h,z){s.position.set(x,h/2,z);s.scale.y=Math.max(h,1)}
 function draw(){const ph=(t%FP)/FP,sens=sensing(ph),P=phys();
  apO.forEach((o,a)=>{if(a>=S.nap)return;o.tp.rotation.y=t*1.5;const pu=1+.25*Math.sin(t*5+a);o.halo.scale.setScalar(pu);
   o.bm.forEach((m,b)=>{const v=sens&&b<S.nb;m.visible=v;m.userData.w.visible=v;m.rotation.y=m.userData.w.rotation.y=-ang[a][b]})});
- tgO.forEach((o,i)=>{const on=i<S.K;o.m.visible=on;o.stem.visible=on;o.est.visible=false;if(!on)return;const q=T[i],p=P3(q.x,0,q.y);
+ tgO.forEach((o,i)=>{const on=i<S.K;o.m.visible=on;o.stem.visible=on;o.lb.visible=on;o.est.visible=false;o.rg.visible=false;if(!on)return;const q=T[i],p=P3(q.x,0,q.y);o.lb.position.set(p[0],1,p[2]);const hl=q.pin||i===so;o.rg.visible=hl;if(hl){o.rg.position.set(p[0],.8,p[2]);o.rg.material.color.setHex(i===so?0xffffff:0xb44cff);o.rg.scale.setScalar(i===so?1.3:1)}
   o.m.position.set(p[0],10+2*Math.sin(t*2+i),p[2]);o.m.rotation.y=t*1.2+i;stemTo(o.stem,p[0],10,p[2]);
   if(q.ft!==undefined&&t-q.ft<2){const f=Math.min(1,2-(t-q.ft)),e=P3(q.fx,0,q.fy);o.est.visible=true;o.est.position.set(e[0],12,e[2]);o.est.rotation.z=t*2;o.est.material.opacity=f;o.est.scale.setScalar(1+(1-f)*.5)}});
  const ws=new Array(S.nap).fill(0);
@@ -174,19 +176,22 @@ function setCam(){const tg=[0,20,0];cam.position.set(rad*Math.sin(pp)*Math.cos(t
 const RC=new THREE.Raycaster();
 function gnd(e,hy){const r=cvs.getBoundingClientRect();RC.setFromCamera({x:(e.clientX-r.left)/r.width*2-1,y:-((e.clientY-r.top)/r.height)*2+1},cam);const o=RC.ray.origin,d=RC.ray.direction;if(d.y>-1e-4)return null;const s=(hy-o.y)/d.y;return s<0?null:[o.x+d.x*s+400,o.z+d.z*s+400]}
 function pick(e){const r=cvs.getBoundingClientRect();let bj=-1,bd=26;ueO.forEach((o,j)=>{if(!o.m.visible)return;V.copy(o.m.position).project(cam);if(V.z>1)return;const d=Math.hypot((V.x*.5+.5)*r.width+r.left-e.clientX,(-V.y*.5+.5)*r.height+r.top-e.clientY);if(d<bd){bd=d;bj=j}});return bj}
+function pickT(e){const r=cvs.getBoundingClientRect();let b=-1,bd=24;tgO.forEach((o,i)=>{if(!o.m.visible)return;V.copy(o.m.position).project(cam);if(V.z>1)return;const d=Math.hypot((V.x*.5+.5)*r.width+r.left-e.clientX,(-V.y*.5+.5)*r.height+r.top-e.clientY);if(d<bd){bd=d;b=i}});return b}
 function pickAP(e){const r=cvs.getBoundingClientRect();let b=-1,bd=30;apO.forEach((o,a)=>{if(a>=S.nap)return;V.set(o.g.position.x,40,o.g.position.z).project(cam);if(V.z>1)return;const d=Math.hypot((V.x*.5+.5)*r.width+r.left-e.clientX,(-V.y*.5+.5)*r.height+r.top-e.clientY);if(d<bd){bd=d;b=a}});return b}
 cvs.addEventListener('pointerdown',e=>{cvs.setPointerCapture(e.pointerId);const j=pick(e);
- if(j>=0&&drag===null){const u=UE[j],g=gnd(e,DT[u.t].h);drag=j;dragPid=e.pointerId;sel=j;dOff=g?[u.x-g[0],u.y-g[1]]:[0,0];u.pin=true;cvs.style.cursor='move';return}
- const pa=pickAP(e);if(pa>=0){sa=pa;sel=null;return}
- sel=null;ptr.set(e.pointerId,[e.clientX,e.clientY]);cvs.style.cursor='grabbing';pd0=0});
-cvs.addEventListener('pointermove',e=>{if(drag!==null&&e.pointerId===dragPid){const u=UE[drag],g=gnd(e,DT[u.t].h);if(g){u.x=Math.max(40,Math.min(760,g[0]+dOff[0]));u.y=Math.max(40,Math.min(760,g[1]+dOff[1]))}return}
- const p=ptr.get(e.pointerId);if(!p){if(drag===null&&e.pointerType==='mouse')cvs.style.cursor=pick(e)>=0?'move':pickAP(e)>=0?'pointer':'grab';return}
+ if(j>=0&&drag===null){const u=UE[j],g=gnd(e,DT[u.t].h);drag=j;dragT=false;so=null;dragPid=e.pointerId;sel=j;dOff=g?[u.x-g[0],u.y-g[1]]:[0,0];u.pin=true;cvs.style.cursor='move';return}
+ const pt=pickT(e);if(pt>=0&&drag===null){const o=T[pt],g=gnd(e,10);drag=pt;dragT=true;dragPid=e.pointerId;so=pt;sel=null;dOff=g?[o.x-g[0],o.y-g[1]]:[0,0];o.pin=true;cvs.style.cursor='move';return}
+ const pa=pickAP(e);if(pa>=0){sa=pa;sel=null;so=null;return}
+ sel=null;so=null;ptr.set(e.pointerId,[e.clientX,e.clientY]);cvs.style.cursor='grabbing';pd0=0});
+cvs.addEventListener('pointermove',e=>{if(drag!==null&&e.pointerId===dragPid){const u=dragT?T[drag]:UE[drag],g=gnd(e,dragT?10:DT[u.t].h);if(g){u.x=Math.max(40,Math.min(760,g[0]+dOff[0]));u.y=Math.max(40,Math.min(760,g[1]+dOff[1]))}return}
+ const p=ptr.get(e.pointerId);if(!p){if(drag===null&&e.pointerType==='mouse')cvs.style.cursor=pick(e)>=0||pickT(e)>=0?'move':pickAP(e)>=0?'pointer':'grab';return}
  if(ptr.size===2){const o=[...ptr.entries()].find(([k])=>k!==e.pointerId)[1],d0=Math.hypot(p[0]-o[0],p[1]-o[1]);ptr.set(e.pointerId,[e.clientX,e.clientY]);const d1=Math.hypot(e.clientX-o[0],e.clientY-o[1]);rad=Math.max(300,Math.min(1900,rad*d0/Math.max(d1,1)));return}
  th-=(e.clientX-p[0])*.006;pp=Math.max(.15,Math.min(1.5,pp-(e.clientY-p[1])*.005));ptr.set(e.pointerId,[e.clientX,e.clientY]);auto=false;$('ar').textContent='Bật xoay cảnh'});
 const up=e=>{if(e.pointerId===dragPid){drag=null;dragPid=null}ptr.delete(e.pointerId);cvs.style.cursor='grab'};cvs.addEventListener('pointerup',up);cvs.addEventListener('pointercancel',up);
 cvs.addEventListener('wheel',e=>{e.preventDefault();rad=Math.max(300,Math.min(1900,rad*(1+e.deltaY*.001)))},{passive:false});
 $('ar').onclick=()=>{auto=!auto;$('ar').textContent=auto?'Tắt xoay cảnh':'Bật xoay cảnh'};
 $('pz').onclick=()=>{pause=!pause;$('pz').textContent=pause?'Tiếp tục':'Tạm dừng'};
+$('tm').onclick=()=>{const k=T.slice(0,S.K),all=k.length>0&&k.every(o=>o.pin);T.forEach(o=>o.pin=!all)};
 $('rs').onclick=init;
 function fit(){const w=cvs.clientWidth,h=cvs.clientHeight;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
 new ResizeObserver(fit).observe(cvs);
@@ -203,6 +208,9 @@ ueO.forEach((o,j)=>{const ty=Math.floor(j/6),k=j%6;
  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:lbTex(NM[ty]+' '+(k+1),HX[ty]),transparent:true,depthTest:false,depthWrite:false,fog:false}));sp.scale.set(112,25.2,1);sp.center.set(.5,1.05);sp.renderOrder=10;sc.add(sp);o.lb=sp;
  const rg=new THREE.Mesh(new THREE.RingGeometry(9,11,32),new THREE.MeshBasicMaterial({color:HX[ty],side:THREE.DoubleSide,transparent:true,opacity:.9}));rg.rotation.x=-Math.PI/2;rg.visible=false;sc.add(rg);o.rg=rg});
 $('un').onclick=()=>{UE.forEach(u=>u.pin=false)};
+const obB=tgO.map((o,i)=>{const b=document.createElement('button');b.onclick=()=>{so=i;sel=null;if(T[i])T[i].pin=!T[i].pin};$('ob').appendChild(b);return b});
+tgO.forEach((o,i)=>{const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:lbTex('Vật cản '+(i+1),'#c77dff'),transparent:true,depthTest:false,depthWrite:false,fog:false}));sp.scale.set(96,21.6,1);sp.center.set(.5,1.05);sp.renderOrder=10;sc.add(sp);o.lb=sp;
+ const rg=new THREE.Mesh(new THREE.RingGeometry(9,11,32),new THREE.MeshBasicMaterial({color:0xb44cff,side:THREE.DoubleSide,transparent:true,opacity:.9}));rg.rotation.x=-Math.PI/2;rg.visible=false;sc.add(rg);o.rg=rg});
 const hx6=a=>'#'+COL[a].toString(16).padStart(6,'0');
 const asB=APS.map((_,a)=>{const b=document.createElement('button');b.innerHTML='<i style="background:'+hx6(a)+'"></i>'+(a+1);b.onclick=()=>{sa=a};$('as').appendChild(b);return b});
 apO.forEach((o,a)=>{const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:lbTex('Trạm '+(a+1),hx6(a)),transparent:true,depthTest:false,depthWrite:false,fog:false}));sp.scale.set(84,18.9,1);sp.center.set(.5,0);sp.position.y=76;sp.renderOrder=10;o.g.add(sp)});
@@ -225,7 +233,8 @@ function frame(now){requestAnimationFrame(frame);const dt=Math.min(.05,(now-(las
  if(!pause)step(dt);if(auto&&!pause&&drag===null)th+=dt*.08;draw();setCam();R.render(sc,cam);scope(now);
  if(now-sl>150){sl=now;const ph=(t%FP)/FP;$('cur').style.left=ph*100+'%';
   $('ph').textContent=sensing(ph)?'Đang quét radar với '+S.nb+' búp':'Đang gửi dữ liệu cho thiết bị';
-  devUI.forEach((r,i)=>r.textContent=S.cnt[i]?rtT[i].toFixed(2)+' Gbps':'–');$('sR').textContent=rt.toFixed(2)+' Gbps';{const su=sel!==null?UE[sel]:null;$('sel').textContent=su&&su.b>=0?NM[su.t]+' '+(su.k+1)+': X '+Math.round(su.x)+' m, Y '+Math.round(su.y)+' m'+(su.pin?' (đã ghim)':''):'';$('un').textContent='Thả ghim ('+UE.filter(u=>u.pin).length+')'}
+  devUI.forEach((r,i)=>r.textContent=S.cnt[i]?rtT[i].toFixed(2)+' Gbps':'–');$('sR').textContent=rt.toFixed(2)+' Gbps';{const su=sel!==null?UE[sel]:null;$('sel').textContent=su&&su.b>=0?NM[su.t]+' '+(su.k+1)+': X '+Math.round(su.x)+' m, Y '+Math.round(su.y)+' m'+(su.pin?' (đã ghim)':''):so!==null&&T[so]?'Vật cản '+(so+1)+': X '+Math.round(T[so].x)+' m, Y '+Math.round(T[so].y)+' m'+(T[so].pin?' (đứng yên)':' (đang di chuyển)'):'';$('un').textContent='Thả ghim ('+UE.filter(u=>u.pin).length+')'}
+  {const kk=T.slice(0,S.K),n=kk.filter(o=>o.pin).length;$('tm').textContent=n===0?'Vật cản: đang di chuyển':n===kk.length?'Vật cản: đứng yên hết':'Vật cản: '+n+'/'+kk.length+' đứng yên';obB.forEach((b,i)=>{const q=T[i];b.textContent=(i+1)+(q&&q.pin?' ■':' ▶');b.classList.toggle('st',!!(q&&q.pin));b.classList.toggle('on',i===so)})}
   {const ea=sa<S.nap?rx[sa].filter(e=>t-e.t<3):[],sn=ea.reduce((m,e)=>Math.max(m,e.snr),0),lst=ea.slice(-4).reverse().map(e=>Math.round(e.r)+' m, hướng '+Math.round(e.az)+'°, SNR '+e.snr.toFixed(0)+' dB').join('<br>');
    $('rx').innerHTML='<b style="color:'+hx6(sa)+'">Trạm '+(sa+1)+'</b>: '+ea.length+' phản xạ trong 3 s'+(ea.length?', mạnh nhất '+sn.toFixed(0)+' dB':'')+'<br>'+(lst||'Chưa thu được phản xạ nào.');asB.forEach((b,a)=>b.classList.toggle('on',a===sa))}$('sP').textContent=Math.round(stat.pd*100)+'%';
   $('sE1').textContent=stat.e1===null?'–':stat.e1.toFixed(1)+' m';$('sE2').textContent=stat.e2===null?'–':stat.e2.toFixed(1)+' m'}}
